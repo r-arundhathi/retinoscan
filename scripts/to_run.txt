@@ -1,0 +1,15 @@
+cd C:\retina_project
+streamlit run app.py --server.headless true
+
+
+
+
+
+cd /c/retina_project
+python app_flask.py
+
+
+
+cd /c/retina_project
+source venv/Scripts/activate
+python app_flask.py

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EyeScan</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="hero">
+    <h1 class="hero-title">Retina Based Disease Prediction</h1>
+<h2 class="hero-subtitle-title">👁️ EyeScan</h2>
+    <p class="hero-subtitle">Upload an eye photo to check for early signs of common conditions</p>
+</div>
+
+<div class="container">
+    <div class="upload-box" id="uploadBox">
+        <input type="file" id="fileInput" accept="image/jpeg,image/png" hidden>
+        <div id="uploadPrompt">
+            <p>📁 Click to choose an eye photo</p>
+        </div>
+        <img id="previewImg" style="display:none;">
+    </div>
+
+    <div id="loading" class="loading" style="display:none;">
+        <div class="spinner"></div>
+        <p>Analyzing...</p>
+    </div>
+
+    <div id="resultCard" class="result-card" style="display:none;"></div>
+
+    <div id="heatmapSection" class="heatmap-section" style="display:none;">
+        <div class="heatmap-images">
+            <div>
+                <img id="origImg">
+                <p class="img-caption">Original</p>
+            </div>
+            <div>
+                <img id="heatImg">
+                <p class="img-caption">Where the model looked</p>
+            </div>
+        </div>
+        <p class="heatmap-note">Red/yellow areas influenced the prediction most</p>
+    </div>
+
+    <a id="downloadBtn" class="download-btn" style="display:none;" href="/download_report">📄 Download PDF Report</a>
+
+    <button id="resetBtn" class="reset-btn" style="display:none;">🔄 Upload Another Image</button>
+    <p class="disclaimer">Not a medical diagnosis — please consult a doctor for confirmation.</p>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

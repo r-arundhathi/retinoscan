@@ -1,0 +1,50 @@
+# Python virtual environment
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter
+.ipynb_checkpoints/
+
+# TensorFlow / Keras models
+*.keras
+*.h5
+*.hdf5
+*.pb
+*.ckpt
+*.pth
+*.pt
+
+# Datasets
+dataset/
+datasets/
+data/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment/secrets
+.env
+# Retinal datasets and generated data
+anemia/
+diabetes/
+heart_disease/
+hypertension/
+normal/
+stroke/
+processed/
+split/
+outputs/
