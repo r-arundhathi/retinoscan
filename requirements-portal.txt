@@ -1,0 +1,10 @@
+
+Flask
+Flask-SQLAlchemy
+Flask-WTF
+Pillow
+numpy
+tensorflow
+opencv-python
+scikit-learn
+reportlab

@@ -1,0 +1,60 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ portal_title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 480px;">
+
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">{{ portal_title }}</h1>
+        <p class="text-muted">
+            Sign in to your EyeScan account
+        </p>
+    </div>
+
+    <div class="card p-4 p-md-5">
+        <form method="POST" action="{{ url_for('login', role=portal_role) }}">
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+                <label for="email" class="form-label">
+                    {{ login_label }}
+                </label>
+
+                {{ form.email(
+                    class="form-control",
+                    id="email",
+                    placeholder=login_placeholder
+                ) }}
+
+                {% for error in form.email.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+
+                {{ form.password(
+                    class="form-control",
+                    id="password",
+                    placeholder="Enter your password"
+                ) }}
+
+                {% for error in form.password.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2">
+                Login
+            </button>
+        </form>
+
+        <p class="text-center mt-4 mb-0">
+            <a href="{{ url_for('index') }}">Back to Home</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

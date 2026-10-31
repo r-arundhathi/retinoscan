@@ -1,2 +1,0 @@
-cd /c/retina_project
-streamlit run app.py

@@ -1,0 +1,53 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Upload Retina Image</h2>
+    <p>Upload a retinal fundus image to generate a prediction report.</p>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="mb-3">
+            <label for="patient_code" class="form-label">
+                Patient ID
+            </label>
+
+            <input
+                type="text"
+                class="form-control"
+                id="patient_code"
+                name="patient_code"
+                value="{{ patient_code or request.form.get('patient_code', '') }}"
+                placeholder="Enter patient ID"
+                required
+            >
+        </div>
+
+        <div class="mb-3">
+            <label for="retina_image" class="form-label">
+                Select Retina Image
+            </label>
+
+            <input
+                type="file"
+                class="form-control"
+                id="retina_image"
+                name="image"
+                accept=".png,.jpg,.jpeg"
+                required
+            >
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Upload and Predict
+        </button>
+
+        <a href="{{ url_for('doctor_dashboard') }}"
+           class="btn btn-secondary">
+            Back to Dashboard
+        </a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,87 @@
+
+{% extends "base.html" %}
+
+{% block title %}Doctor Registration{% endblock %}
+
+{% block content %}
+
+<div class="container py-5" style="max-width: 650px;">
+
+    <h1 class="fw-bold mb-2">Doctor Registration</h1>
+    <p class="text-muted mb-4">
+        Enter the doctor's details to create a portal account.
+    </p>
+
+    <div class="card shadow-sm p-4">
+
+        <form method="POST" action="{{ url_for('create_doctor') }}">
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <div class="mb-3">
+                {{ form.name.label(class="form-label") }}
+                {{ form.name(class="form-control", placeholder="Full name") }}
+                {% for error in form.name.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control", placeholder="Email address") }}
+                {% for error in form.email.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control", placeholder="Temporary password") }}
+                {% for error in form.password.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.phone.label(class="form-label") }}
+                {{ form.phone(class="form-control", placeholder="Phone number") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.specialization.label(class="form-label") }}
+                {{ form.specialization(class="form-control", placeholder="e.g. Ophthalmology") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.qualification.label(class="form-label") }}
+                {{ form.qualification(class="form-control", placeholder="Medical qualification") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.license_number.label(class="form-label") }}
+                {{ form.license_number(class="form-control", placeholder="Medical license number") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.clinic_name.label(class="form-label") }}
+                {{ form.clinic_name(class="form-control", placeholder="Clinic or hospital name") }}
+            </div>
+
+            <div class="mb-4">
+                {{ form.address.label(class="form-label") }}
+                {{ form.address(class="form-control", rows="3", placeholder="Clinic address") }}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                Create Doctor
+            </button>
+</form>
+
+    </div>
+</div>
+
+{% endblock %}

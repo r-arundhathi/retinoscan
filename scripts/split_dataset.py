@@ -1,60 +1,102 @@
-import os
-import shutil
-import random
 
-SOURCE_DIR = r"C:\retina_project\processed"
-OUTPUT_DIR = r"C:\retina_project\split"
-CLASSES = ["anemia", "diabeties", "heart_disease", "hypertension", "stroke", "normal"]
+import hashlib
+import random
+import shutil
+from pathlib import Path
+
+SOURCE_DIR = Path(r"C:\retina_project\processed")
+OUTPUT_DIR = Path(r"C:\retina_project\split")
+
+CLASSES = [
+    "anemia",
+    "diabeties",
+    "heart_disease",
+    "hypertension",
+    "stroke",
+    "normal",
+]
 
 TRAIN_RATIO = 0.70
 VAL_RATIO = 0.15
-TEST_RATIO = 0.15
+SEED = 42
 
-random.seed(42)
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff"}
+
+
+def get_hash(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
 
 def main():
-    for split in ["train", "val", "test"]:
-        for cls in CLASSES:
-            os.makedirs(os.path.join(OUTPUT_DIR, split, cls), exist_ok=True)
+    if not SOURCE_DIR.is_dir():
+        raise FileNotFoundError(f"Source folder not found: {SOURCE_DIR}")
 
-    summary = []
+    rng = random.Random(SEED)
+    assignments = {"train": [], "val": [], "test": []}
+    seen_hashes = set()
+    total_duplicates = 0
 
+    # Group identical images so they cannot cross dataset splits.
     for cls in CLASSES:
-        src_folder = os.path.join(SOURCE_DIR, cls)
-        if not os.path.isdir(src_folder):
-            print(f"Skipping missing folder: {src_folder}")
+        class_dir = SOURCE_DIR / cls
+
+        if not class_dir.is_dir():
+            print(f"Skipping missing class: {cls}")
             continue
 
-        files = [f for f in os.listdir(src_folder) if f.lower().endswith(".jpg")]
-        random.shuffle(files)
+        groups = {}
 
-        n_total = len(files)
-        n_train = int(n_total * TRAIN_RATIO)
-        n_val = int(n_total * VAL_RATIO)
-        n_test = n_total - n_train - n_val
+        for path in class_dir.rglob("*"):
+            if not path.is_file() or path.suffix.lower() not in IMAGE_EXTENSIONS:
+                continue
 
-        train_files = files[:n_train]
-        val_files = files[n_train:n_train + n_val]
-        test_files = files[n_train + n_val:]
+            digest = get_hash(path)
 
-        for fname in train_files:
-            shutil.copy2(os.path.join(src_folder, fname), os.path.join(OUTPUT_DIR, "train", cls, fname))
-        for fname in val_files:
-            shutil.copy2(os.path.join(src_folder, fname), os.path.join(OUTPUT_DIR, "val", cls, fname))
-        for fname in test_files:
-            shutil.copy2(os.path.join(src_folder, fname), os.path.join(OUTPUT_DIR, "test", cls, fname))
+            if digest in seen_hashes:
+                total_duplicates += 1
+                print(f"Skipping duplicate image: {path}")
+                continue
 
-        summary.append((cls, n_train, n_val, n_test, n_total))
-        print(f"{cls}: train={n_train}, val={n_val}, test={n_test}, total={n_total}")
+            seen_hashes.add(digest)
+            groups.setdefault(digest, []).append(path)
 
-    print("\n=== SPLIT COMPLETE ===")
-    total_train = sum(s[1] for s in summary)
-    total_val = sum(s[2] for s in summary)
-    total_test = sum(s[3] for s in summary)
-    print(f"Total train: {total_train}")
-    print(f"Total val: {total_val}")
-    print(f"Total test: {total_test}")
-    print(f"Output saved to: {OUTPUT_DIR}")
+        # Each unique image is assigned to exactly one split.
+        images = [paths[0] for paths in groups.values()]
+        rng.shuffle(images)
+
+        n = len(images)
+        n_train = int(n * TRAIN_RATIO)
+        n_val = int(n * VAL_RATIO)
+
+        assignments["train"].extend((cls, p) for p in images[:n_train])
+        assignments["val"].extend(
+            (cls, p) for p in images[n_train:n_train + n_val]
+        )
+        assignments["test"].extend(
+            (cls, p) for p in images[n_train + n_val:]
+        )
+
+    # Refuse to overwrite existing results automatically.
+    if OUTPUT_DIR.exists() and any(OUTPUT_DIR.iterdir()):
+        raise FileExistsError(
+            f"{OUTPUT_DIR} already contains files. "
+            "Rename or move the existing split folder before rebuilding."
+        )
+
+    for split, items in assignments.items():
+        for cls, source_path in items:
+            destination_dir = OUTPUT_DIR / split / cls
+            destination_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source_path, destination_dir / source_path.name)
+
+    print("\n=== NEW SPLIT COMPLETE ===")
+    for split, items in assignments.items():
+        print(f"{split}: {len(items)} images")
+
+    print(f"Exact duplicate files skipped: {total_duplicates}")
+    print(f"Total unique images assigned: {sum(map(len, assignments.values()))}")
+    print(f"Output: {OUTPUT_DIR}")
+
 
 if __name__ == "__main__":
     main()

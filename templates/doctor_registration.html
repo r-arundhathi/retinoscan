@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Registration | EyeScan{% endblock %}
+
+{% block content %}
+<section class="container py-5" style="max-width: 760px;">
+    <div class="mb-4">
+        <div class="eyebrow mb-2">Join EyeScan</div>
+        <h1 class="page-heading">Doctor Registration</h1>
+        <p class="text-muted">Create your doctor account to manage patient records and retinal screening reports.</p>
+    </div>
+
+    <div class="card p-4 p-md-5">
+        <form method="POST" action="{{ url_for('doctor_registration') }}">
+            {{ form.hidden_tag() }}
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    {{ form.name.label(class="form-label fw-semibold") }}
+                    {{ form.name(class="form-control", placeholder="Full name") }}
+                    {% for error in form.name.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-md-6">
+                    {{ form.email.label(class="form-label fw-semibold") }}
+                    {{ form.email(class="form-control", placeholder="name@example.com") }}
+                    {% for error in form.email.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-md-6">
+                    {{ form.password.label(class="form-label fw-semibold") }}
+                    {{ form.password(class="form-control", placeholder="Min. 8 characters: uppercase, lowercase and number") }}
+                    {% for error in form.password.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-md-6">
+                    {{ form.phone.label(class="form-label fw-semibold") }}
+                    {{ form.phone(class="form-control", placeholder="Phone number") }}
+                </div>
+
+                <div class="col-md-6">
+                    {{ form.specialization.label(class="form-label fw-semibold") }}
+                    {{ form.specialization(class="form-control", placeholder="e.g. Ophthalmology") }}
+                </div>
+
+                <div class="col-md-6">
+                    {{ form.qualification.label(class="form-label fw-semibold") }}
+                    {{ form.qualification(class="form-control", placeholder="Medical qualification") }}
+                </div>
+</div>
+<button type="submit" class="btn btn-primary w-100">Create Doctor Account</button>
+        </form>
+
+        <p class="text-center text-muted mt-4 mb-0">
+            Already registered?
+            <a href="{{ url_for('login', role='doctor') }}">Doctor Login</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

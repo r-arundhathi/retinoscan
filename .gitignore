@@ -48,3 +48,9 @@ stroke/
 processed/
 split/
 outputs/
+
+# EyeScan local database and generated files
+instance/
+image_validation_dataset/
+outputs_grouped/
+split_grouped/

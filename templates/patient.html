@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Patient Dashboard{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="mb-4"><h1 class="fw-bold">Patient Dashboard</h1><p class="text-muted">Welcome, {{ current_user.name }}.</p></div>
+    <div class="card shadow-sm p-4 mb-4">
+        <h4>Your Patient Details</h4>
+        <p class="mb-1"><strong>Name:</strong> {{ current_user.name }}</p>
+        <p class="mb-1"><strong>Age:</strong> {{ patient.age if patient.age is not none else "Not provided" }}</p>
+        <p class="mb-1"><strong>Gender:</strong> {{ patient.gender or "Not provided" }}</p>
+        <p class="mb-0"><strong>Patient ID:</strong> <span class="text-primary fw-bold">{{ patient.patient_code }}</span></p>
+        <p class="text-muted mt-2 mb-0">Keep your Patient ID safe. Your doctor needs it to save reports to your account.</p>
+    </div>
+    <div class="card shadow-sm p-4">
+        <h4 class="mb-3">Your Screening Reports</h4>
+        {% if reports %}
+        <div class="table-responsive"><table class="table table-hover align-middle">
+            <thead><tr><th>Report ID</th><th>Prediction</th><th>Confidence</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody>{% for r in reports %}<tr>
+                <td>#{{ r.id }}</td><td>{{ r.predicted_class | replace('_', ' ') | title }}</td>
+                <td>{{ '%.1f'|format(r.confidence) }}%</td>
+                <td>{{ r.created_at | ist_datetime }}</td>
+                <td class="d-flex flex-wrap gap-1"><a class="btn btn-sm btn-outline-info" href="{{ url_for('view_report', report_id=r.id) }}">View</a>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('download_patient_report', report_id=r.id) }}">Download PDF</a></td>
+            </tr>{% endfor %}</tbody>
+        </table></div>
+        {% else %}<div class="text-center py-4"><h5>No reports available yet</h5><p class="text-muted">Your reports will appear here after your doctor uploads and processes a retinal image.</p></div>{% endif %}
+    </div>
+    <div class="alert alert-warning mt-4"><strong>Medical disclaimer:</strong> These AI-generated results are experimental screening information, not a medical diagnosis. Consult a qualified healthcare professional for medical assessment.</div>
+</div>
+{% endblock %}

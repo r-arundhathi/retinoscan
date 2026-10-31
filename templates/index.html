@@ -1,54 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>EyeScan</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-
-<div class="hero">
-    <h1 class="hero-title">Retina Based Disease Prediction</h1>
-<h2 class="hero-subtitle-title">👁️ EyeScan</h2>
-    <p class="hero-subtitle">Upload an eye photo to check for early signs of common conditions</p>
-</div>
-
-<div class="container">
-    <div class="upload-box" id="uploadBox">
-        <input type="file" id="fileInput" accept="image/jpeg,image/png" hidden>
-        <div id="uploadPrompt">
-            <p>📁 Click to choose an eye photo</p>
+{% extends "base.html" %}
+{% block title %}EyeScan | Retina Screening Portal{% endblock %}
+{% block content %}
+<section class="container py-5">
+  {% if current_user.is_authenticated %}
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card p-4 p-md-5 text-center">
+          <div class="eyebrow mb-2">Welcome back</div>
+          <h2 class="page-heading">{{ current_user.name }}</h2>
+          <p class="text-muted">You are signed in as a {{ current_user.role|title }}.</p>
+          {% if current_user.role|lower == 'doctor' %}
+            <a class="btn btn-primary btn-lg align-self-center" href="{{ url_for('doctor_dashboard') }}">Open Doctor Dashboard</a>
+          {% elif current_user.role|lower == 'patient' %}
+            <a class="btn btn-primary btn-lg align-self-center" href="{{ url_for('patient_dashboard') }}">Open Patient Dashboard</a>
+          {% else %}
+            <a class="btn btn-primary btn-lg align-self-center" href="{{ url_for('dashboard') }}">Open Dashboard</a>
+          {% endif %}
         </div>
-        <img id="previewImg" style="display:none;">
+      </div>
     </div>
-
-    <div id="loading" class="loading" style="display:none;">
-        <div class="spinner"></div>
-        <p>Analyzing...</p>
+  {% else %}
+    <div class="text-center mb-4">
+      <div class="eyebrow mb-2">Choose your portal</div>
+      <h2 class="page-heading">Sign in to EyeScan</h2>
+      <p class="text-muted">Select the portal that matches your account.</p>
     </div>
-
-    <div id="resultCard" class="result-card" style="display:none;"></div>
-
-    <div id="heatmapSection" class="heatmap-section" style="display:none;">
-        <div class="heatmap-images">
-            <div>
-                <img id="origImg">
-                <p class="img-caption">Original</p>
-            </div>
-            <div>
-                <img id="heatImg">
-                <p class="img-caption">Where the model looked</p>
-            </div>
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="portal-card">
+          <div class="portal-icon">✚</div>
+          <h3 class="h4 fw-bold">Doctor Portal</h3>
+          <p class="text-muted">Register patients, upload retinal images, and manage screening reports.</p>
+          <div class="d-grid gap-2 mt-2">
+            <a class="btn btn-primary" href="{{ url_for('login', role='doctor') }}">Doctor Login</a>
+            <a class="btn btn-outline-primary" href="{{ url_for('doctor_registration') }}">Doctor Registration</a>
+          </div>
         </div>
-        <p class="heatmap-note">Red/yellow areas influenced the prediction most</p>
+      </div>
+      <div class="col-md-6 col-lg-5">
+        <div class="portal-card">
+          <div class="portal-icon">♡</div>
+          <h3 class="h4 fw-bold">Patient Portal</h3>
+          <p class="text-muted">Access your patient profile and view or download reports shared by your doctor.</p>
+          <a class="btn btn-outline-primary w-100 mt-2" href="{{ url_for('login', role='patient') }}">Continue as Patient</a>
+        </div>
+      </div>
     </div>
-
-    <a id="downloadBtn" class="download-btn" style="display:none;" href="/download_report">📄 Download PDF Report</a>
-
-    <button id="resetBtn" class="reset-btn" style="display:none;">🔄 Upload Another Image</button>
-    <p class="disclaimer">Not a medical diagnosis — please consult a doctor for confirmation.</p>
-</div>
-
-<script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
-</html>
+    <p class="text-center text-muted small mt-4">Patient accounts are created by doctors. Use the Patient ID provided by your doctor to sign in.</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -8,9 +8,9 @@ import os
 
 from model import build_model
 
-SPLIT_DIR = r"C:\retina_project\split"
-MODEL_DIR = r"C:\retina_project\models"
-OUTPUT_DIR = r"C:\retina_project\outputs"
+SPLIT_DIR = r"C:\retina_project\split_grouped"
+MODEL_DIR = r"C:\retina_project\models_grouped"
+OUTPUT_DIR = r"C:\retina_project\outputs_grouped"
 IMG_SIZE = 224
 BATCH_SIZE = 32
 INITIAL_EPOCHS = 20
